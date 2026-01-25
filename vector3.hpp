@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-struct Vector3 { //this struct defines the 3D vectors that I'm gonna uso for the physics engine
+struct Vector3 { //this struct defines the 3D vectors that I'm gonna use for the physics engine
     float x, y, z;
 
     Vector3() : x(0.0f), y(0.0f), z(0.0f) {} //default constructor
@@ -32,6 +32,20 @@ struct Vector3 { //this struct defines the 3D vectors that I'm gonna uso for the
     Vector3 operator/(const float scalar) const {
         return Vector3(x/scalar,y/scalar,z/scalar);
     }//vector division
+
+    Vector3& operator*=(const float s)  {
+        x *= s;
+        y *= s;
+        z *= s;
+        return *this;
+    }//VVVVVV
+    Vector3& operator/=(const float s) {
+        const float inv = 1.0f / s;
+        x *= inv;
+        y *= inv;
+        z *= inv;
+        return *this;
+    }//compound mult and div
 
     float dot_prod(const Vector3& other) const {
         return x * other.x + y * other.y + z * other.z;

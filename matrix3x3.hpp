@@ -13,7 +13,7 @@ struct Matrix3x3 {
 
     Matrix3x3(float sx,float sy,float sz) {
         m[0] =sx; m[4]=sy; m[8]=sz;
-    }//I
+    }//Initial constructor
 
     Matrix3x3(const Vector3& x, const Vector3& y, const Vector3& z) {
         m[0]=x.x; m[3]=x.y; m[6]=x.z;
@@ -84,6 +84,45 @@ struct Matrix3x3 {
         result.transpose();
         return result;
     }   //ts two swap rows and columns
+
+    float determinant() const {
+        return   m[0]*(m[4]*m[8]-m[5]*m[7])
+                -m[1]*(m[3]*m[8]-m[5]*m[6])
+                +m[2]*(m[3]*m[7]-m[4]*m[6]);
+    }//for finding the determinant of a given matrix
+
+    Matrix3x3 inverse() const {
+        float det = determinant();
+        if (std::abs(det) < 1e-6f) { /* handle singular */ }
+
+        // Adjugate elements (cofactors transposed)
+        float inv_det = 1.0f / det;
+        Matrix3x3 result;
+        result.m[0] =  (m[4]*m[8] - m[5]*m[7]) * inv_det;  // C11
+        result.m[1] = -(m[1]*m[8] - m[2]*m[7]) * inv_det;  // C21
+        result.m[2] =  (m[1]*m[5] - m[2]*m[4]) * inv_det;  // C31
+
+        result.m[3] = -(m[3]*m[8] - m[5]*m[6]) * inv_det;  // C12
+        result.m[4] =  (m[0]*m[8] - m[2]*m[6]) * inv_det;  // C22
+        result.m[5] = -(m[0]*m[5] - m[2]*m[3]) * inv_det;  // C32
+
+        result.m[6] =  (m[3]*m[7] - m[4]*m[6]) * inv_det;  // C13
+        result.m[7] = -(m[0]*m[7] - m[1]*m[6]) * inv_det;  // C23
+        result.m[8] =  (m[0]*m[4] - m[1]*m[3]) * inv_det;  // C33
+
+        return result;
+    }//inverses a matrix
+
+    bool isOrthogonal(const Matrix3x3& m) {
+        Vector3 col0(m.m[0], m.m[3], m.m[6]);
+        Vector3 col1(m.m[1], m.m[4], m.m[7]);
+        Vector3 col2(m.m[2], m.m[5], m.m[8]);
+
+        return std::abs(col0.dot_prod(col1)) < 1e-6f &&  // Orthogonal
+               std::abs(col0.length() - 1.0f) < 1e-6f; // Unit length
+    } //checks if a matrix is orthogonal (for future things w quaternions)
+
+
 
 
     float& operator()(int row, int col) { return m[row*3 + col]; }      //VVVVVVV
