@@ -33,6 +33,19 @@ struct Vector3 { //this struct defines the 3D vectors that I'm gonna use for the
         return Vector3(x/scalar,y/scalar,z/scalar);
     }//vector division
 
+    Vector3& operator+=(const Vector3& other)  {
+        x += other.x;
+        y += other.y;
+        z += other.z;
+        return *this;
+    }//VVVVVV
+    Vector3& operator-=(const Vector3& other)  {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+        return *this;
+    }//compound add and sub
+
     Vector3& operator*=(const float s)  {
         x *= s;
         y *= s;

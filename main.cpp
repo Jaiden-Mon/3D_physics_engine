@@ -1,38 +1,39 @@
 #include <iostream>
+#include <iomanip>
 #include "Vector3.hpp"
 #include "Matrix3x3.hpp"
+#include "world.hpp"
+#include "rigidbody.hpp"
 
-using namespace std;
 
 
 int main() {
+    World world;
 
-    Vector3 u = Vector3(1,2,3);
-    Vector3 v = Vector3(4,5,6);
-    Vector3 w = Vector3(7,8,9);
+    RigidBody* sphere= new RigidBody(1.0f);//a sphere w mass 1kg
+    sphere-> position = Vector3(0.0f, 5.0f, 0.0f);//for it to start at 3m high
+    sphere-> inv_inertia_l = Matrix3x3();//simplified sphere-like
+    world.add_body(sphere); //adds the sphere into the world
 
-    Matrix3x3 A = Matrix3x3(u,v,w).transposed();
-    Matrix3x3 B = Matrix3x3(v,w,u).transposed();
-    Matrix3x3 C = A*B;
+    RigidBody* ground =  new RigidBody(0.0f);//creates a static ground w infinite mass
+    ground-> position = Vector3(0.0f, 0.0f, 0.0f);
+    world.add_body(ground);//adds the ground into the world,for later collisions
 
+    std::cout<<std::fixed<<std::setprecision(2);
+    std::cout << "Time\tPosY\t\t VelY\n";
 
-    for (int row = 0; row < 3; row++) {
-        for (int col = 0; col < 3; col++) {
-            cout<<C(row,col)<<" ";
-        }
-        cout<<endl;
+    float time = 0.0f;
+    for (int step = 0; step < 600; step++) {
+        world.step(1.0f/60.0f);
+        time += 1.0f/60.0f;
+
+        if (step % 30 == 0) {
+            std::cout << time << "\t"<< sphere->position.y << "\t \t"<< sphere->l_velocity.y << "\n";
+        }//prints every 0.5 seconds
+
     }
 
-    cout<<endl<<"determinant of C =  "<<C.determinant()<<endl;
-
-
+    delete sphere;
+    delete ground;
     return 0;
 }
-
-/*for (int row = 0; row < 3; row++) {
-    for (int col = 0; col < 3; col++) {
-        cout<<A(row,col)<<" ";
-    }
-    cout<<endl;
-}
-*/
