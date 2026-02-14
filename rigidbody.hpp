@@ -5,6 +5,10 @@
 #include "matrix3x3.hpp"
 #include "quaternion.hpp"
 
+struct Sphere {
+    float radius = 1.0f;
+};
+
 struct RigidBody {
 
     Vector3 position;
@@ -25,6 +29,16 @@ struct RigidBody {
 
     RigidBody(float m): mass(m), inv_mass(m > 0 ? 1.0f/m : 0.0f){};
 
+    Sphere sphere;
+
+    RigidBody(float m, float r)
+        : mass(m),
+          inv_mass(m > 0 ? 1.0f / m : 0.0f),
+          sphere{r} {}
+
 };
+
+
+
 
 #endif //PHY2_RIGID_BODY_HPP

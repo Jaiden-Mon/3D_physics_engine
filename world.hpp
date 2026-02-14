@@ -5,11 +5,13 @@
 
 class World {
     std::vector<RigidBody*> bodies;
-    public:
+public:
 
     void add_body(RigidBody* body){bodies.push_back(body);};
     void step(float dt);
     void integrate(float dt);
+    void detectCollision();
+    void resolveCollision();
 };
 
 

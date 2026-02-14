@@ -4,36 +4,44 @@
 #include "Matrix3x3.hpp"
 #include "world.hpp"
 #include "rigidbody.hpp"
-
+#include "collision.hpp"
 
 
 int main() {
     World world;
 
-    RigidBody* sphere= new RigidBody(1.0f);//a sphere w mass 1kg
-    sphere-> position = Vector3(0.0f, 5.0f, 0.0f);//for it to start at 3m high
-    sphere-> inv_inertia_l = Matrix3x3();//simplified sphere-like
-    world.add_body(sphere); //adds the sphere into the world
+    //sphere A, above
+    auto* A = new RigidBody(1.0f, 0.5f);
+    A->position = Vector3(0,1.2f,0);
+    A->l_velocity = Vector3(0,-2.0,0); //falling
+    world.add_body(A);
 
-    RigidBody* ground =  new RigidBody(0.0f);//creates a static ground w infinite mass
-    ground-> position = Vector3(0.0f, 0.0f, 0.0f);
-    world.add_body(ground);//adds the ground into the world,for later collisions
+    //sphere B, below
+    auto* B = new RigidBody(1.0f, 0.5f);
+    B->position = Vector3(0, 0.0f, 0);
+    B->l_velocity = Vector3(0, 0.0f, 0);
+    world.add_body(B);
 
-    std::cout<<std::fixed<<std::setprecision(2);
-    std::cout << "Time\tPosY\t\t VelY\n";
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "t\t\t Ay\t\t VyA \t\t By \t\t VyB \n";
 
-    float time = 0.0f;
-    for (int step = 0; step < 600; step++) {
-        world.step(1.0f/60.0f);
-        time += 1.0f/60.0f;
+    float t = 0.0f;
+    const float dt = 1.0f / 60.0f;
 
-        if (step % 30 == 0) {
-            std::cout << time << "\t"<< sphere->position.y << "\t \t"<< sphere->l_velocity.y << "\n";
-        }//prints every 0.5 seconds
+    for (int i = 0; i < 240; i++) {
+        world.step(dt);
+        t += dt;
 
+        if (i % 10 == 0) { // print every ~0.16s
+            std::cout << t << "\t"
+                      << A->position.y << "\t\t" << A->l_velocity.y << "\t\t"
+                      << B->position.y << "\t\t" << B->l_velocity.y << "\n";
+
+
+        }
     }
 
-    delete sphere;
-    delete ground;
-    return 0;
+    delete A;
+    delete B;
+
 }
